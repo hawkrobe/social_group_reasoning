@@ -1,0 +1,104 @@
+///fold:
+var truncate = function(obj) {
+  return mapObject(function(key, val) {
+    return (val <= 0 ? 0.001 :
+            val >= 1 ? 0.999 :
+            val);
+  }, obj);
+};
+
+// Each agent chooses proportional to own utility (Luce choice...)
+var choiceDist = function(utility) {
+  var ps = normalize(_.values(utility));
+  var vs = _.keys(utility);
+  return Categorical({ps, vs});
+};
+
+// Given a sampled utility for each agent, how likely are their choices?
+var otherLikelihoods = function(otherUtilities, otherChoices) {
+  var likelihoods = map2(function(otherUtility, otherChoice) {
+    return choiceDist(otherUtility).score(otherChoice);
+  }, otherUtilities, otherChoices);
+  return sum(likelihoods);
+};
+
+var sampleAgentUtility = function(groupParams) {
+  var mean = groupParams.groupMean;
+  var sd = groupParams.groupSD;
+  return truncate({
+    "Burger Barn" : gaussian(mean["Burger Barn"], sd),
+    "Stirfry Shack" : gaussian(mean["Stirfry Shack"], sd)
+  });
+};
+
+var sampleOtherUtilities = function(numAgents, groupParams) {
+  return repeat(numAgents, function() {
+    return sampleAgentUtility(groupParams);
+  })
+};
+///
+
+var numAgents = 3;
+
+var sampleGroupParams = function() {
+  return {
+    groupMean : {
+      "Burger Barn" : beta(1,1),
+      "Stirfry Shack" : beta(1,1)
+    },
+    groupSD : uniform(0,.15)
+  };
+};
+
+var prior = function() {
+  var groupParams = sampleGroupParams(); 
+  return {
+    groupParams : groupParams,
+    ownUtility: sampleAgentUtility(groupParams),
+    otherUtilities : sampleOtherUtilities(numAgents, groupParams)
+  };  
+};// case 1
+var data = [{self: {choice : "Burger Barn", rewardSignal : true},
+             others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]}];
+// case 2
+// var data = [{self: {choice : "Burger Barn", rewardSignal : true},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : true},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : true},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : true},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]}];
+// case 3
+// var data = [{self: {choice : "Burger Barn", rewardSignal : false},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : false},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : false},
+//                  others : ["Stirfry Shack", "Stirfry Shack", "Stirfry Shack"]},
+//                 {self: {choice : "Burger Barn", rewardSignal : false},
+//                  others : ["Burger Barn", "Burger Barn", "Stirfry Shack"]}];
+
+
+var model = function() {
+  var beliefs = prior();
+  mapData({data: data}, function(datum) {
+    // What beliefs would make this reward signal most likely?
+    var rewardExpectation = beliefs.ownUtility[datum.self.choice];
+    observe(Bernoulli({p: rewardExpectation}), datum.self.rewardSignal)
+    
+    // What beliefs would make my friend's choices most likely?
+    factor(otherLikelihoods(beliefs.otherUtilities, datum.others));
+  });
+  return beliefs;
+};
+
+var results = Infer({method: 'SMC', particles: 10000}, model);
+
+console.log('estimation of own utility')
+viz.marginals(marginalize(results, 'ownUtility'))
+
+console.log('estimation of group params')
+console.log(expectation(results, function(x) {return x['groupParams']['groupMean']['Burger Barn']}))
+console.log(expectation(results, function(x) {return x['groupParams']['groupMean']['Stirfry Shack']}))
+console.log(expectation(results, function(x) {return x['groupParams']['groupSD']}))
