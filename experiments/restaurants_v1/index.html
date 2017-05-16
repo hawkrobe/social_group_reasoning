@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Lunchtime</title>
+        
+        <!-- Load jsPsych -->
+        <script src='_shared/js/jquery-1.11.1.min.js'></script>
+        <script src='jspsych/jspsych.js'></script>        
+        <link href='jspsych/css/jspsych.css' rel='stylesheet' type='text/css'></link>
+        
+        <!-- CocoLab utilities -->
+        <script src = '_shared/js/underscore-min.js'></script>
+        <script src = '_shared/js/mmturkey.js'></script>
+        <script src = '_shared/js/browser.detect.js'></script>
+        
+        <!-- Specify jsPsych plugins here -->
+        <script src = 'jspsych/plugins/jspsych-text.js'></script>
+        <script src = 'jspsych/plugins/jspsych-instructions.js'></script>
+        <script src = 'scripts/user-plugins/new_day.js'></script>
+        <script src = 'scripts/user-plugins/lunch.js'></script>
+
+        <!-- Other experiment-specific scripts -->
+        <script src = 'scripts/exp-timeline.js'></script>
+        <script src = 'scripts/utils.js'></script>
+    
+        <link href='styles/experiment-style.css' rel='stylesheet' type='text/css'></link>
+    </head>
+
+    <body>
+        
+        <!-- jspsych-target should be empty! Your experiment nodes will add content to this div. -->
+        
+        <div class = "slide" id = "jspsych-target">
+        </div>
+        
+        <div id = "templates">
+            <div class = "slide" id = "agent_intro">
+                <h1>Welcome!</h1>
+                <p>Today you'll learn about the comings and goings of the employees of Cognitiv Inc. These are the employees of Cognitiv Inc:</p>
+                
+                <table id = "agent_table">
+                    <tr>
+                        <td><img class = "agent" src = "images/agents/a.png" /></td>
+                        <td><img class = "agent" src = "images/agents/b.png" /></td>
+                        <td><img class = "agent" src = "images/agents/c.png" /></td>
+                        <td><img class = "agent" src = "images/agents/d.png" /></td>
+                        <td><img class = "agent" src = "images/agents/e.png" /></td>
+                        <td><img class = "agent" src = "images/agents/f.png" /></td>
+                    </tr>
+                    <tr>
+                        <td>Alice (A)</td>
+                        <td>Bill (B)</td>
+                        <td>Claire (C)</td>
+                        <td>Dylan (D)</td>
+                        <td>Elliot (E)</td>
+                        <td>Fiona (F)</td>
+                    </tr>
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "restaurant_intro">
+                <p>Across the street from Cognitiv Inc, there are four restaurants.<br/> The employees of Cognitiv Inc always eat at one of these four restaurants:</p>
+                
+                <table class = "restaurant_table">
+                    <tr class = "restaurant_roster">
+                        <td><img class = "restaurant" src = "images/restaurants/bb.png" /></td>
+                        <td><img class = "restaurant" src = "images/restaurants/pp.png" /></td>
+                        <td><img class = "restaurant" src = "images/restaurants/ss.png" /></td>
+                        <td><img class = "restaurant" src = "images/restaurants/tt.png" /></td>
+                    </tr>
+                    
+                    <tr class = "agent_roster">
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                    </tr>
+                    
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "calendar_intro">
+                <p>You'll follow the employees of Cognitiv Inc for five days. On each day, we'll tell you where each employee went to get lunch. At the end of the week, we'll ask you a few questions about the employees of Cognitiv Inc, so <strong>please pay attention to where they go get lunch!</strong>.</p>
+                
+                <table class = "calendar_table">
+                    <tr class = "day">
+                        <td>Monday</td>
+                        <td>Tuesday</td>
+                        <td>Wednesday</td>
+                        <td>Thursday</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr class = "check">
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                    </tr>
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "new_day">
+                <h1>Day {0}: {1}</h1>
+                
+                <table class = "calendar_table">
+                    <tr class = "day">
+                        <td>Monday</td>
+                        <td>Tuesday</td>
+                        <td>Wednesday</td>
+                        <td>Thursday</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr class = "check">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <button class = "continue">Continue</button>
+                
+            </div>
+            
+            <div class = "slide" id = "lunch">
+                <p>On {0}, <strong>{1}</strong> went to <strong>{2}</strong>. <br />
+                (Click on {1} ({3}) to continue!)</p>
+                
+                <table class = "restaurant_table">
+                    <tr class = "restaurant_roster">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr class = "agent_roster">
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </div>
+            
+            <div class = "slide" id = "seat_assignment">
+                <h1>Let's make lunch tables!</h1>
+                <p>You've now seen where all of the employees of Cognitiv Inc go to lunch. Now, let's put them together into tables! <strong>Please assign each employee to a lunch table.</strong> You can <em>add</em> up to 6 tables, or <em>remove</em> any tables that are empty. Once you've put all of the employees in a lunch table, click Continue.</p>
+                <div id ="pool">
+                    <p>Unassigned:</p>
+                    
+                    <img class = "agent" src = "images/agents/a.png" />
+                    <img class = "agent" src = "images/agents/b.png" />
+                    <img class = "agent" src = "images/agents/c.png" />
+                    <img class = "agent" src = "images/agents/d.png" />
+                    <img class = "agent" src = "images/agents/e.png" />
+                    <img class = "agent" src = "images/agents/f.png" />
+                </div>
+                
+                <div id = "tables">
+                    <div class = "table">
+                        <h3>Table 1:</h3>
+
+                    </div>                                               
+                </div>
+                
+                <button class = "modify_tables active" id = "add_table">(+) Add table</button><button class = "modify_tables" id = "delete_table">(-) Remove table</button>
+                
+                <button class = "continue">Continue</button>
+                
+                
+            </div>
+        </div>
+
+    </body>
+
+</html>
