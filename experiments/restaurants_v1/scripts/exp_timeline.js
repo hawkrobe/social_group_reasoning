@@ -25,12 +25,18 @@ $(document).ready(function(){
                       {key: 'ss', name: 'Stirfry Shack', img: 'images/restaurants/ss.png'},
                       {key: 'tt', name: 'Taco Town', img: 'images/restaurants/tt.png'}];
 
-    var agents = [{name: 'Alice', abbrev: 'A', img: 'images/agents/a.png', lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
-                  {name: 'Bill', abbrev: 'B', img: 'images/agents/b.png', lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
-                  {name: 'Claire', abbrev: 'C', img: 'images/agents/c.png', lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
-                  {name: 'Dylan', abbrev: 'D', img: 'images/agents/d.png', lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
-                  {name: 'Elliot', abbrev: 'E', img: 'images/agents/e.png', lunch: ['ss', 'ss', 'ss', 'ss', 'ss']},
-                  {name: 'Fiona', abbrev: 'F', img: 'images/agents/f.png', lunch: ['ss', 'ss', 'ss', 'ss', 'ss']}];
+    var agents = [{name: 'Alice', abbrev: 'A', img: 'images/agents/a.png', 
+                   lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
+                  {name: 'Bill', abbrev: 'B', img: 'images/agents/b.png', 
+                   lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
+                  {name: 'Claire', abbrev: 'C', img: 'images/agents/c.png', 
+                   lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
+                  {name: 'Dylan', abbrev: 'D', img: 'images/agents/d.png', 
+                   lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
+                  {name: 'Elliot', abbrev: 'E', img: 'images/agents/e.png', 
+                   lunch: ['ss', 'ss', 'ss', 'ss', 'ss']},
+                  {name: 'Fiona', abbrev: 'F', img: 'images/agents/f.png', 
+                   lunch: ['ss', 'ss', 'ss', 'ss', 'ss']}];
     
     // Preload images
     var restaurant_images = _.pluck(_.values(restaurants), 'img');
@@ -43,6 +49,7 @@ $(document).ready(function(){
     STEP 2: ASSEMBLE TIMELINE
     */
     
+    // (1) Instructions/backstory
     exp_timeline = [{type: 'instructions',
                     pages: [$('#agent_intro').html(),
                            $('#restaurant_intro').html(),
@@ -50,12 +57,9 @@ $(document).ready(function(){
                     allow_keys: false,
                     show_clickable_nav: true}];
 
+    // (2) Lunch days
     n_days = days.length;
     n_agents = agents.length;
-    
-    
-    
-
     for (d = 0; d < n_days; d++) {
         // List of agents displayed each day
         var disp_agents = [];
@@ -89,6 +93,13 @@ $(document).ready(function(){
         }
     }
     
+    // (3) DVs
+    var seating_chart = {type: 'seating_chart',
+                        html: $('#seating_chart').html()};
+    
+    exp_timeline.push(seating_chart);
+    
+    var debug_timeline = [seating_chart]
     jsPsych.init({
         display_element: $('#jspsych-target'),
         timeline: exp_timeline,
