@@ -38,7 +38,7 @@ jsPsych.plugins['lunch'] = (function(){
       
       // Make current image clickable
       display_element.find('#'+trial.abbrev).on('click', function(){
-          display_element.empty();
+          // display_element.empty();
           jsPsych.finishTrial();
       });
   }

@@ -43,7 +43,7 @@ button {
 	background-color: #FFF;
     padding: 0px;
     margin: 0 auto;
-    width: 100vw;
+    width: 97.5vw;
     min-height: 100vh;
     text-align: center;
 }
@@ -154,20 +154,35 @@ button {
 
 /* ——————————————————— SEAT ASSIGNMENT ——————————————————— */
 #pool, #tables {
-    width: 75vw;
+    width: 50vw;
     display: block;
     margin: 0 auto;
 }
 
-# tables {
-    
+#pool {
+    color: #ffc4c4;
+    min-height: 10vh;
+    border-radius: 10px;
+    border: 2px solid #ffc4c4;
+}
+
+#pool p {
+    padding: 0;
+    margin: 0;
+}
+
+#tables {
+    width: 100%;
+    min-height: 32vh;
+    display: block;
 }
 
 .table {
+    vertical-align: top;
     display: inline-block;
     width: 20vw;
     height: 25vh;
-    margin: 1vh .5vw;
+    margin: 1vh 2vw;
     padding: 1vw;
     border: 2px solid #c2c2c2;
 }

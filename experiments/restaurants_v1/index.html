@@ -5,6 +5,7 @@
         
         <!-- Load jsPsych -->
         <script src='_shared/js/jquery-1.11.1.min.js'></script>
+        <script src='/_shared/js/jquery-ui-min.js'></script>
         <script src='jspsych/jspsych.js'></script>        
         <link href='jspsych/css/jspsych.css' rel='stylesheet' type='text/css'></link>
         
@@ -18,9 +19,10 @@
         <script src = 'jspsych/plugins/jspsych-instructions.js'></script>
         <script src = 'scripts/user-plugins/new_day.js'></script>
         <script src = 'scripts/user-plugins/lunch.js'></script>
+        <script src = 'scripts/user-plugins/seating_chart.js'></script>
 
         <!-- Other experiment-specific scripts -->
-        <script src = 'scripts/exp-timeline.js'></script>
+        <script src = 'scripts/exp_timeline.js'></script>
         <script src = 'scripts/utils.js'></script>
     
         <link href='styles/experiment-style.css' rel='stylesheet' type='text/css'></link>
@@ -163,30 +165,30 @@
                 </table>
             </div>
             
-            <div class = "slide" id = "seat_assignment">
+            <div class = "slide" id = "seating_chart">
                 <h1>Let's make lunch tables!</h1>
-                <p>You've now seen where all of the employees of Cognitiv Inc go to lunch. Now, let's put them together into tables! <strong>Please assign each employee to a lunch table.</strong> You can <em>add</em> up to 6 tables, or <em>remove</em> any tables that are empty. Once you've put all of the employees in a lunch table, click Continue.</p>
+                <p>You've now seen where all of the employees of Cognitiv Inc go to lunch. Now, let's put them together into tables! <strong>Please drag and drop each employee to assign them to a lunch table.</strong> You can <em>add</em> up to 6 tables, or <em>remove</em> any tables that are empty. Once you've put all of the employees in a lunch table, click Continue.</p>
                 <div id ="pool">
                     <p>Unassigned:</p>
                     
-                    <img class = "agent" src = "images/agents/a.png" />
-                    <img class = "agent" src = "images/agents/b.png" />
-                    <img class = "agent" src = "images/agents/c.png" />
-                    <img class = "agent" src = "images/agents/d.png" />
-                    <img class = "agent" src = "images/agents/e.png" />
-                    <img class = "agent" src = "images/agents/f.png" />
+                    <img class = "agent" src = "images/agents/a.png" data-val = "A" />
+                    <img class = "agent" src = "images/agents/b.png" data-val = "B" />
+                    <img class = "agent" src = "images/agents/c.png" data-val = "C" />
+                    <img class = "agent" src = "images/agents/d.png" data-val = "D" />
+                    <img class = "agent" src = "images/agents/e.png" data-val = "E" />
+                    <img class = "agent" src = "images/agents/f.png" data-val = "F" />
                 </div>
                 
                 <div id = "tables">
                     <div class = "table">
-                        <h3>Table 1:</h3>
+                        <h3>Table 1</h3>
 
                     </div>                                               
                 </div>
                 
                 <button class = "modify_tables active" id = "add_table">(+) Add table</button><button class = "modify_tables" id = "delete_table">(-) Remove table</button>
                 
-                <button class = "continue">Continue</button>
+                <button class = "continue-inactive">Continue</button>
                 
                 
             </div>
