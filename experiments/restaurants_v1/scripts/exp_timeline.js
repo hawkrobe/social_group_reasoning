@@ -96,13 +96,16 @@ $(document).ready(function(){
     // (3) DVs
     var seating_chart = {type: 'seating_chart',
                         html: $('#seating_chart').html()};
+  var unknown_preference = {type: 'button-response',
+                            stimulus: $('#unknown_preference').html(),
+                            is_html: true,
+                            choices: _.pluck(restaurants, 'name')};
+  exp_timeline.push(seating_chart, unknown_preference);
     
-    exp_timeline.push(seating_chart);
-    
-    var debug_timeline = [seating_chart]
+    var debug_timeline = [unknown_preference]
     jsPsych.init({
         display_element: $('#jspsych-target'),
-        timeline: exp_timeline,
+        timeline: debug_timeline,
         on_finish: function(){
             var data = jsPsych.data.getData();
 
