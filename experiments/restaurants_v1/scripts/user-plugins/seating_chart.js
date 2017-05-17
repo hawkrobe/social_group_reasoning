@@ -27,12 +27,11 @@ jsPsych.plugins['seating_chart'] = (function(){
             if (n_tables < 6) {
                 // Create table object
                 var table_txt = '<div class = "table"><h3>Table {0}</h3></div>'.format(n_tables + 1);
-                $('#tables').append(table_txt);
+                var table_obj = $(table_txt);
+                $('#tables').append(table_obj);
 
                 // Connect new table to pool
-                console.log($('.table').last().html())
-                
-                $('.table').last().sortable({
+                table_obj.sortable({
                     items: 'img',
                     connectWith: ['#pool', '.table']
                 })
