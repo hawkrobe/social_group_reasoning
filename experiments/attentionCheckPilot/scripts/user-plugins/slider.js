@@ -1,4 +1,4 @@
-jsPsych.plugins['lunch'] = (function(){
+jsPsych.plugins['slider'] = (function(){
   
   var plugin = {};
 
@@ -7,7 +7,8 @@ jsPsych.plugins['lunch'] = (function(){
     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
     
     // Fill in the blanks
-    var trial_content = trial.html.format(trial.name, trial.abbrev);
+    var agent = trial.agent;    
+    var trial_content = trial.html.format(agent.name, agent.abbrev);
     display_element.html(trial_content);
     
     // Add in restaurants
@@ -17,27 +18,24 @@ jsPsych.plugins['lunch'] = (function(){
       $(this).append(img_tag);
     });
     
-    // Add in clients below restaurants
-    display_element.find('.agent_roster td').each(function(i){
-      var curr_resto = $(this);
-      
-      // Show only agents that went to the particular restaurant
-      var agents = _.filter(trial.agents, function(e){
-        return e['lunch'][trial.day_no] == trial.all_restaurants[i]['key'];
-      });
-      
-      _.map(agents, function(e, i){
-        var img_tag = '<img src = "{0}" id = "{1}" class = "agent" />'.format(e['img'], e['abbrev']);
-        curr_resto.append(img_tag);
-      });  
-    });
+    // Add in agent below restaurants
+    var a = trial.agent;
+    var img_tag = '<img src = "{0}" id = "{1}" class = "agent" />'.format(a['img'], a['abbrev']);
+    display_element.append(img_tag);
     
-    // Make current image clickable
-    display_element.find('#'+trial.abbrev).on('click', function(){
-      // display_element.empty();
-      $(this).unbind('click');
-      jsPsych.finishTrial();
+    // Make slider
+    for(var i = 0; i < trial.all_restaurants.length; i++) {
+      var restoName = trial.all_restaurants[i]['name'];
+      var sliderHtml = '<td><div id="slider{0}{1}"></div></td>'.format(i, agent.name);
+      var nameHtml = '<td><p>{0}</p></td>'.format(restoName);
+      $(this).append(nameHtml);
+      $(this).append(sliderHtml);
+      console.log($('#slider{0}{1}'.format(i, agent.name)));
+      $('.slider{0}{1}'.format(i, agent.name)).slider();        
+      // initialize slider
+
     });
+
   }
 
   return plugin;

@@ -118,6 +118,19 @@ button {
     width: 15vw;
 }
 
+/*align the left and right labels for the sliders properly*/
+.slider_table .left {
+	display: inline;
+	text-align: left;
+	float: left;
+}
+
+.slider_table .right {
+	display: inline;
+	text-align: right;
+	float: right;
+}
+
 .calendar_table {
     display: block;
     width: 50vw;

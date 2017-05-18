@@ -93,25 +93,22 @@ $(document).ready(function(){
             exp_timeline.push(new_lunch);
         }
     }
-    
-    // (3) DVs
-  // var seating_chart = {type: 'seating_chart',
-  //                      html: $('#seating_chart').html()};
 
-  // var unknown_preference = {type: 'button-response',
-  //                           stimulus: $('#unknown_preference').html(),
-  //                           is_html: true,
-  //                           choices: _.pluck(restaurants, 'name')};
+  // (3) DVs
+  for (var a = 0; a < n_agents; a++) {
+    exp_timeline.push({
+      type: 'slider',
+      html: $('#slider').html(),
+      all_restaurants: restaurants,
+      agent: agents[a]
+    });
+  }
 
-  // var unknown_group = {type: 'button-response',
-  //                      stimulus: $('#unknown_group').html(),
-  //                      is_html: true,
-  //                      choices: ['table 1', 'table 2', 'table 3', 'table 4']};
   // exp_timeline.push(seating_chart, unknown_preference, unknown_group);
-
+  debug_timeline = exp_timeline.slice(-1);
     jsPsych.init({
         display_element: $('#jspsych-target'),
-        timeline: exp_timeline,
+        timeline: debug_timeline,
         on_finish: function(){
             var data = jsPsych.data.getData();
 
