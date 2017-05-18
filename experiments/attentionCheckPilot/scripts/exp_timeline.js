@@ -19,10 +19,9 @@ $(document).ready(function(){
     */
 
     var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    days = ['Monday', 'Tuesday'];
 
     var restaurants = [{key: 'bb', name: 'Burger Barn', img: 'images/restaurants/bb.png'},
-                      {key: 'pp', name: 'Pasta Plaza', img: 'images/restaurants/pp.png'},
+//                      {key: 'pp', name: 'Pasta Plaza', img: 'images/restaurants/pp.png'},
                       {key: 'ss', name: 'Stirfry Shack', img: 'images/restaurants/ss.png'},
                       {key: 'tt', name: 'Taco Town', img: 'images/restaurants/tt.png'}];
 
@@ -32,14 +31,15 @@ $(document).ready(function(){
                    lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
                   {name: 'Claire', abbrev: 'C', img: 'images/agents/c.png', 
                    lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
-                  {name: 'Dylan', abbrev: 'D', img: 'images/agents/d.png', 
-                   lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
-                  {name: 'Elliot', abbrev: 'E', img: 'images/agents/e.png', 
-                   lunch: ['ss', 'ss', 'ss', 'ss', 'ss']},
-                  {name: 'Fiona', abbrev: 'F', img: 'images/agents/f.png', 
-                   lunch: ['ss', 'ss', 'ss', 'ss', 'ss']}];
-    
-    // Preload images
+                  // {name: 'Dylan', abbrev: 'D', img: 'images/agents/d.png', 
+                  //  lunch: ['bb', 'bb', 'bb', 'bb', 'bb']},
+                  // {name: 'Elliot', abbrev: 'E', img: 'images/agents/e.png', 
+                  //  lunch: ['ss', 'ss', 'ss', 'ss', 'ss']},
+                  // {name: 'Fiona', abbrev: 'F', img: 'images/agents/f.png', 
+                  //  lunch: ['ss', 'ss', 'ss', 'ss', 'ss']}];
+                 ];
+
+  // Preload images
     var restaurant_images = _.pluck(_.values(restaurants), 'img');
     var agent_images = _.pluck(_.values(agents), 'img');
     
@@ -54,7 +54,7 @@ $(document).ready(function(){
     exp_timeline = [{type: 'instructions',
                     pages: [$('#agent_intro').html(),
                            $('#restaurant_intro').html(),
-                           $('#calendar_intro').html()],
+                            $('#calendar_intro').html()],
                     allow_keys: false,
                     show_clickable_nav: true}];
 
@@ -74,13 +74,13 @@ $(document).ready(function(){
         exp_timeline.push(new_day);
         
         // Show agents' lunch for each day
-        for (a = 0; a < n_agents; a++) {
-            var curr_agent = agents[a]
-            var curr_resto = _.findWhere(restaurants, {key: curr_agent['lunch'][d]})
+        for (var a = 0; a < n_agents; a++) {
+          var curr_agent = agents[a];
+          var curr_resto = _.findWhere(restaurants, {key: curr_agent['lunch'][d]});
             
-            disp_agents.push(curr_agent)
-            
-            var new_lunch = {type: 'lunch',
+          disp_agents = [curr_agent];
+          
+          var new_lunch = {type: 'lunch',
                             html: $('#lunch').html(),
                             day: days[d],
                             day_no: d,
@@ -93,25 +93,22 @@ $(document).ready(function(){
             exp_timeline.push(new_lunch);
         }
     }
-    
-    // (3) DVs
-  var seating_chart = {type: 'seating_chart',
-                       html: $('#seating_chart').html()};
 
-  var unknown_preference = {type: 'button-response',
-                            stimulus: $('#unknown_preference').html(),
-                            is_html: true,
-                            choices: _.pluck(restaurants, 'name')};
+  // (3) DVs
+  for (var a = 0; a < n_agents; a++) {
+    exp_timeline.push({
+      type: 'slider',
+      html: $('#slider').html(),
+      all_restaurants: restaurants,
+      agent: agents[a]
+    });
+  }
 
-  var unknown_group = {type: 'button-response',
-                       stimulus: $('#unknown_group').html(),
-                       is_html: true,
-                       choices: ['table 1', 'table 2', 'table 3', 'table 4']};
-  exp_timeline.push(seating_chart, unknown_preference, unknown_group);
-
+  // exp_timeline.push(seating_chart, unknown_preference, unknown_group);
+  debug_timeline = exp_timeline.slice(-1);
     jsPsych.init({
         display_element: $('#jspsych-target'),
-        timeline: exp_timeline,
+        timeline: debug_timeline,
         on_finish: function(){
             var data = jsPsych.data.getData();
 

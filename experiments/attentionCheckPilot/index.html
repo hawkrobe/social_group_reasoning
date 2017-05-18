@@ -20,6 +20,7 @@
         <script src = 'jspsych/plugins/jspsych-button-response.js'></script>
         <script src = 'scripts/user-plugins/new_day.js'></script>
         <script src = 'scripts/user-plugins/lunch.js'></script>
+        <script src = 'scripts/user-plugins/slider.js'></script>        
         <script src = 'scripts/user-plugins/seating_chart.js'></script>
 
         <!-- Other experiment-specific scripts -->
@@ -46,17 +47,11 @@
                         <td><img class = "agent" src = "images/agents/a.png" /></td>
                         <td><img class = "agent" src = "images/agents/b.png" /></td>
                         <td><img class = "agent" src = "images/agents/c.png" /></td>
-                        <td><img class = "agent" src = "images/agents/d.png" /></td>
-                        <td><img class = "agent" src = "images/agents/e.png" /></td>
-                        <td><img class = "agent" src = "images/agents/f.png" /></td>
                     </tr>
                     <tr>
                         <td>Alice (A)</td>
                         <td>Bill (B)</td>
                         <td>Claire (C)</td>
-                        <td>Dylan (D)</td>
-                        <td>Elliot (E)</td>
-                        <td>Fiona (F)</td>
                     </tr>
                 </table>
                 
@@ -66,26 +61,22 @@
                 <p>Across the street from Cognitiv Inc, there are four restaurants.<br/> The employees of Cognitiv Inc always eat at one of these four restaurants:</p>
                 
                 <table class = "restaurant_table">
-                    <tr class = "restaurant_roster">
-                        <td><img class = "restaurant" src = "images/restaurants/bb.png" /></td>
-                        <td><img class = "restaurant" src = "images/restaurants/pp.png" /></td>
-                        <td><img class = "restaurant" src = "images/restaurants/ss.png" /></td>
-                        <td><img class = "restaurant" src = "images/restaurants/tt.png" /></td>
-                    </tr>
+                  <tr class = "restaurant_roster">
+                    <td><img class = "restaurant" src = "images/restaurants/bb.png" /></td>
+                    <td><img class = "restaurant" src = "images/restaurants/ss.png" /></td>
+                    <td><img class = "restaurant" src = "images/restaurants/tt.png" /></td>
+                  </tr>
                     
-                    <tr class = "agent_roster">
-                        <td>
-                        </td>
+                    <!-- <tr class = "agent_roster"> -->
+                    <!--     <td> -->
+                    <!--     </td> -->
                         
-                        <td>
-                        </td>
+                    <!--     <td> -->
+                    <!--     </td> -->
                         
-                        <td>
-                        </td>
-                        
-                        <td>
-                        </td>
-                    </tr>
+                    <!--     <td> -->
+                    <!--     </td> -->
+                    <!-- </tr> -->
                     
                 </table>
                 
@@ -146,13 +137,9 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
                     </tr>
                     
                     <tr class = "agent_roster">
-                        <td>
-                        </td>
-                        
                         <td>
                         </td>
                         
@@ -166,52 +153,27 @@
                 </table>
             </div>
             
-            <div class = "slide" id = "seating_chart">
-                <h1>Let's make lunch tables!</h1>
-                <p>You've now seen where all of the employees of Cognitiv Inc go to lunch. Now, let's put them together into tables! <strong>Please drag and drop each employee to assign them to a lunch table.</strong> You can <em>add</em> up to 6 tables, or <em>remove</em> any tables that are empty. Once you've put all of the employees in a lunch table, click Continue.</p>
-                <div id ="pool">
-                    <p>Unassigned:</p>
-                    
-                    <img class = "agent" src = "images/agents/a.png" data-val = "A" />
-                    <img class = "agent" src = "images/agents/b.png" data-val = "B" />
-                    <img class = "agent" src = "images/agents/c.png" data-val = "C" />
-                    <img class = "agent" src = "images/agents/d.png" data-val = "D" />
-                    <img class = "agent" src = "images/agents/e.png" data-val = "E" />
-                    <img class = "agent" src = "images/agents/f.png" data-val = "F" />
-                </div>
-                
-                <div id = "tables">
-                    <div class = "table">
-                        <h3>Table 1</h3>
+            <div class = "slide" id = "slider">
+                <p>How much do you think <strong>{0}</strong> ({1}) liked each restaurant? <br />
+                </p>
 
-                    </div>                                               
-                </div>
-                
-                <button class = "modify_tables active" id = "add_table">(+) Add table</button><button class = "modify_tables" id = "delete_table">(-) Remove table</button>
-                
-                <button class = "continue-inactive">Continue</button>
-                
-                
-            </div>
+                <table class = "restaurant_table">
+                  <tr class = "restaurant_roster">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>                  
+                </table>
 
-            <div class = "slide" id = "unknown_preference">
-              <h1>Meet Gina!</h1>
-              <p>A few weeks later, you see a new employee named Gina
-              sitting with Bill and Alice at lunch [TODO: insert names
-              of people at some table]. [TODO: keep tables from
-              previous slide on screen, and add a new agent to
-              one]. Which restaurant do you think is Gina's favorite?]</p>
-              <!-- <div id = "tables"> -->
-              <!--   <div class = "table"> -->
-              <!--   </div> -->
-              <!-- </div> -->
-
+                <table class = "slider_table">
+                  <tr>
+                    <td></td>
+                    <td class="left">totally inappropriate</td>
+                    <td class="right">totally appropriate</td>
+                  </tr>
+                </table>
+                <button class = "continue">Continue</button>
             </div>
-            <div class = "slide" id = "unknown_group">
-              <h1>Meet Harold!</h1>
-              <p>That same day, you meet Harold, another new employee. Harold is getting food from <strong>Taco Town</strong> [TODO: plug in restaurant name from manipulation]. Which table do you think he will sit at? [TODO: keep tables from previous two slides, allow to click]</p>
-            </div>
-        </div>
 
     </body>
 
