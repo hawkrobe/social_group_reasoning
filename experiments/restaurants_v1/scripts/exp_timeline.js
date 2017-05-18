@@ -110,11 +110,15 @@ $(document).ready(function(){
                        stimulus: $('#unknown_group').html(),
                        is_html: true,
                        choices: ['table 1', 'table 2', 'table 3', 'table 4']};
+    
   exp_timeline.push(seating_chart, unknown_preference, unknown_group);
+    
+    // All DVs
+    var debug_timeline = [seating_chart, unknown_preference, unknown_group];
 
     jsPsych.init({
         display_element: $('#jspsych-target'),
-        timeline: exp_timeline,
+        timeline: debug_timeline,
         on_finish: function(){
             var data = jsPsych.data.getData();
 

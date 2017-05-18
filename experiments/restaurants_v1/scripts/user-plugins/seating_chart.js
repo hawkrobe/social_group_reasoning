@@ -67,10 +67,7 @@ jsPsych.plugins['seating_chart'] = (function(){
         
         // Enable continue button if all agents have been assigned
         display_element.find('#pool').on('sortout', function(event, ui){  
-            console.log(this)
-            var remaining_agents = $(this).children('img').length - 2;
-            console.log(remaining_agents)
-            
+            var remaining_agents = $(this).children('img').length - 2;            
             
             if (remaining_agents === 0) {
                 var button = display_element.find('#continue');
@@ -81,21 +78,22 @@ jsPsych.plugins['seating_chart'] = (function(){
                 button.on('click', function(event, ui){
                     var all_tables = display_element.find('.table')
                     
-                    var seating_obj = all_tables.map(function(){
+                    var seating = _.map(all_tables, function(e, i){
                         // Get all agents sitting at the table
-                        var agent_imgs = $(this).find('img');
+                        var agent_imgs = $(e).find('img');
                         
                         // Return ids
-                        var agent_ids = agent_imgs.map(function(){
-                            return $(this).attr('data-val');
+                        var agent_ids = _.map(agent_imgs, function(e, i){
+                            return $(e).attr('data-val');
                         });
                         
                         return agent_ids
-                                            
+                                                                    
                     });
                     
-                    var seating = seating_obj.toArray();
-                    
+                    // Remove empty tables
+                    seating = _.filter(seating, function(e){return e.length})
+                                        
                     display_element.empty();
                     jsPsych.finishTrial({seating: seating});
                 });
