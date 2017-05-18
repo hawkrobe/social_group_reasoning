@@ -1,0 +1,232 @@
+@charset "UTF-8";
+/* ——————————————————— EXPERIMENT-WIDE ELEMENTS ——————————————————— */
+body {
+	font-family: Helvetica, Arial, sans-serif;
+    /*background-color: #CAEAE7;*/
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-family: Quicksand, Helvetica, Arial, sans-serif;
+}
+
+p, h2, h3 {
+    clear: left;
+}
+
+
+button {
+	height: 50px;
+	font-size: 12pt;
+	width: 200px;
+	display:block;
+	margin: 20px auto 20px auto;
+	padding: 0 20px;
+	background-color: #a2e8e1;
+	border-radius: 5px;
+	border: none;
+    clear: left
+}
+
+.continue-inactive {
+    background-color: #bdbdbd;
+    color: #e1e1e1;
+}
+
+.continue-active {
+    background-color: #FF9108;
+    color: #fbeedf;
+}
+
+.slide{
+	background-color: #FFF;
+    padding: 0px;
+    margin: 0 auto;
+    width: 97.5vw;
+    min-height: 100vh;
+    text-align: center;
+}
+
+#jspsych-target {
+    text-align: center;
+}
+
+.left-text {
+    text-align: left;
+}
+
+.unselected, .selected {
+    border-width: 5px;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+.unselected {
+    border-color: #ffffff;
+}
+
+.selected {
+    /* border-color: #caea87; */
+    -webkit-box-shadow: 0 0 15px 5px #caea87, inset 0px 0px 0px 5px #fff;
+    -moz-box-shadow: 0 0 15px 5px #caea87, inset 0px 0px 0px 5px #fff;
+    box-shadow: 0 0 15px 5px #caea87, inset 0px 0px 0px 5px #fff;
+}
+
+.centered-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+/* ——————————————————— EXPERIMENT-SPECIFIC ELEMENTS ——————————————————— */
+.agent {
+    width: 5vw;
+}
+
+#agent_table {
+    width: 30vw;
+    display: block;
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+#agent_table td {
+    width: 10vw;
+    padding: 10px 0;
+}
+
+.restaurant_table {
+    width: 60vw;
+    display: block;
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+.restaurant_table td {
+    width: 20vw;
+    padding: 0 2.5vw;
+}
+
+.restaurant_table tr {
+    height: 25vh;
+}
+
+.restaurant {
+    width: 15vw;
+}
+
+.calendar_table {
+    display: block;
+    width: 50vw;
+    table-layout: fixed;
+    margin: 0 auto;
+    border-spacing: 1vw;
+    border-collapse: separate;
+}
+
+.calendar_table td {
+    width: 8.75vw;
+}
+
+.calendar_table .check td {
+    height: 15vh;   
+}
+
+.calendar_table .past, .calendar_table .future {
+    border: 2px solid #dedede;
+}
+
+.calendar_table .past {
+    background-color: #dedede;
+}
+
+.calendar_table .present {
+    background-color: #a2e8e1;
+    border-color: #a2e8e1
+
+}
+
+.calendar_table .present {
+}
+
+/* ——————————————————— SEAT ASSIGNMENT ——————————————————— */
+#pool, #tables {
+    width: 50vw;
+    display: block;
+    margin: 0 auto;
+}
+
+#pool {
+    color: #ffc4c4;
+    min-height: 10vh;
+    border-radius: 10px;
+    border: 2px solid #ffc4c4;
+}
+
+#pool p {
+    padding: 0;
+    margin: 0;
+}
+
+#tables {
+    width: 100%;
+    min-height: 32vh;
+    display: block;
+}
+
+.table {
+    vertical-align: top;
+    display: inline-block;
+    width: 20vw;
+    height: 25vh;
+    margin: 1vh 2vw;
+    padding: 1vw;
+    border: 2px solid #c2c2c2;
+}
+
+.table h3 {
+    padding: 0;
+    margin: 0;
+    color: #aaa;
+}
+
+.modify_tables {
+    width: 12.5vw;
+    display: inline-block;
+    margin: 0 2.5vw 2vh 2.5vw;
+    background-color: #fff;
+    border: 2px solid;
+}
+
+#add_table {
+    border-color: #4ec6e8;
+    color: #4ec6e8;
+}
+
+#delete_table {
+    border-color: #e84d5d;
+    color: #e84d5d;
+}
+
+/* ——————————————————— SURVEY ——————————————————— */
+#survey input[type="text"] {
+    width: 8em;
+    font-size: 12pt;
+}
+
+#i0-wrapper {
+    background-color: #CAEAE7;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+#consent {
+    background-color: #FFFFFF;
+    width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}

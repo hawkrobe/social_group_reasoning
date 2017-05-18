@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Lunchtime</title>
+        
+        <!-- Load jsPsych -->
+        <script src='_shared/js/jquery-1.11.1.min.js'></script>
+        <script src='_shared/js/jquery-ui-min.js'></script>
+        <script src='jspsych/jspsych.js'></script>        
+        <link href='jspsych/css/jspsych.css' rel='stylesheet' type='text/css'></link>
+        
+        <!-- CocoLab utilities -->
+        <script src = '_shared/js/underscore-min.js'></script>
+        <script src = '_shared/js/mmturkey.js'></script>
+        <script src = '_shared/js/browser.detect.js'></script>
+        
+        <!-- Specify jsPsych plugins here -->
+        <script src = 'jspsych/plugins/jspsych-text.js'></script>
+        <script src = 'jspsych/plugins/jspsych-instructions.js'></script>
+        <script src = 'jspsych/plugins/jspsych-button-response.js'></script>
+        <script src = 'scripts/user-plugins/new_day.js'></script>
+        <script src = 'scripts/user-plugins/lunch.js'></script>
+        <script src = 'scripts/user-plugins/slider.js'></script>        
+        <script src = 'scripts/user-plugins/seating_chart.js'></script>
+
+        <!-- Other experiment-specific scripts -->
+        <script src = 'scripts/exp_timeline.js'></script>
+        <script src = 'scripts/utils.js'></script>
+    
+        <link href='styles/experiment-style.css' rel='stylesheet' type='text/css'></link>
+    </head>
+
+    <body>
+        
+        <!-- jspsych-target should be empty! Your experiment nodes will add content to this div. -->
+        
+        <div class = "slide" id = "jspsych-target">
+        </div>
+        
+        <div id = "templates">
+            <div class = "slide" id = "agent_intro">
+                <h1>Welcome!</h1>
+                <p>Today you'll learn about the comings and goings of the employees of Cognitiv Inc. These are the employees of Cognitiv Inc:</p>
+                
+                <table id = "agent_table">
+                    <tr>
+                        <td><img class = "agent" src = "images/agents/a.png" /></td>
+                        <td><img class = "agent" src = "images/agents/b.png" /></td>
+                        <td><img class = "agent" src = "images/agents/c.png" /></td>
+                    </tr>
+                    <tr>
+                        <td>Alice (A)</td>
+                        <td>Bill (B)</td>
+                        <td>Claire (C)</td>
+                    </tr>
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "restaurant_intro">
+                <p>Across the street from Cognitiv Inc, there are four restaurants.<br/> The employees of Cognitiv Inc always eat at one of these four restaurants:</p>
+                
+                <table class = "restaurant_table">
+                  <tr class = "restaurant_roster">
+                    <td><img class = "restaurant" src = "images/restaurants/bb.png" /></td>
+                    <td><img class = "restaurant" src = "images/restaurants/ss.png" /></td>
+                    <td><img class = "restaurant" src = "images/restaurants/tt.png" /></td>
+                  </tr>
+                    
+                    <!-- <tr class = "agent_roster"> -->
+                    <!--     <td> -->
+                    <!--     </td> -->
+                        
+                    <!--     <td> -->
+                    <!--     </td> -->
+                        
+                    <!--     <td> -->
+                    <!--     </td> -->
+                    <!-- </tr> -->
+                    
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "calendar_intro">
+                <p>You'll follow the employees of Cognitiv Inc for five days. On each day, we'll tell you where each employee went to get lunch. At the end of the week, we'll ask you a few questions about the employees of Cognitiv Inc, so <strong>please pay attention to where they go get lunch!</strong>.</p>
+                
+                <table class = "calendar_table">
+                    <tr class = "day">
+                        <td>Monday</td>
+                        <td>Tuesday</td>
+                        <td>Wednesday</td>
+                        <td>Thursday</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr class = "check">
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                        <td class = "future"></td>
+                    </tr>
+                </table>
+                
+            </div>
+            
+            <div class = "slide" id = "new_day">
+                <h1>Day {0}: {1}</h1>
+                
+                <table class = "calendar_table">
+                    <tr class = "day">
+                        <td>Monday</td>
+                        <td>Tuesday</td>
+                        <td>Wednesday</td>
+                        <td>Thursday</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr class = "check">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <button class = "continue">Continue</button>
+                
+            </div>
+            
+            <div class = "slide" id = "lunch">
+                <p>On {0}, <strong>{1}</strong> went to <strong>{2}</strong>. <br />
+                (Click on {1} ({3}) to continue!)</p>
+                
+                <table class = "restaurant_table">
+                    <tr class = "restaurant_roster">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr class = "agent_roster">
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </div>
+            
+            <div class = "slide" id = "slider">
+                <p>How much do you think <strong>{0}</strong> ({1}) liked each restaurant? <br />
+                  )</p>
+                
+                <table class = "restaurant_table">
+                    <tr class = "restaurant_roster">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr class = "agent_roster">
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                        
+                        <td>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </div>
+
+    </body>
+
+</html>
