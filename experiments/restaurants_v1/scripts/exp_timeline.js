@@ -94,18 +94,23 @@ $(document).ready(function(){
     }
     
     // (3) DVs
-    var seating_chart = {type: 'seating_chart',
-                        html: $('#seating_chart').html()};
+  var seating_chart = {type: 'seating_chart',
+                       html: $('#seating_chart').html()};
+
   var unknown_preference = {type: 'button-response',
                             stimulus: $('#unknown_preference').html(),
                             is_html: true,
                             choices: _.pluck(restaurants, 'name')};
-  exp_timeline.push(seating_chart, unknown_preference);
-    
-    var debug_timeline = [unknown_preference]
+
+  var unknown_group = {type: 'button-response',
+                       stimulus: $('#unknown_group').html(),
+                       is_html: true,
+                       choices: ['table 1', 'table 2', 'table 3', 'table 4']};
+  exp_timeline.push(seating_chart, unknown_preference, unknown_group);
+
     jsPsych.init({
         display_element: $('#jspsych-target'),
-        timeline: debug_timeline,
+        timeline: exp_timeline,
         on_finish: function(){
             var data = jsPsych.data.getData();
 
