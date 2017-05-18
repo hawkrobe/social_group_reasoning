@@ -19,12 +19,11 @@ $(document).ready(function(){
     */
 
     var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    days = ['Monday', 'Tuesday'];
+    days = ['Monday', 'Tuesday']; // For debugging only
 
-    var restaurants = [{key: 'bb', name: 'Burger Barn', img: 'images/restaurants/bb.png'},
-                      {key: 'pp', name: 'Pasta Plaza', img: 'images/restaurants/pp.png'},
-                      {key: 'ss', name: 'Stirfry Shack', img: 'images/restaurants/ss.png'},
-                      {key: 'tt', name: 'Taco Town', img: 'images/restaurants/tt.png'}];
+    var restaurants = [{key: 'bb', name: 'Burger Barn', img: 'images/trucks/bb.png'},
+                      {key: 'ss', name: 'Stirfry Shack', img: 'images/trucks/ss.png'},
+                      {key: 'tt', name: 'Taco Town', img: 'images/trucks/tt.png'}];
 
     var agents = [{name: 'Alice', abbrev: 'A', img: 'images/agents/a.png', 
                    lunch: ['tt', 'tt', 'tt', 'tt', 'tt']},
@@ -73,6 +72,9 @@ $(document).ready(function(){
 
         exp_timeline.push(new_day);
         
+        // Shuffle restaurants each day
+        var resto_locations = _.shuffle(restaurants);
+        
         // Show agents' lunch for each day
         for (a = 0; a < n_agents; a++) {
             var curr_agent = agents[a]
@@ -88,7 +90,7 @@ $(document).ready(function(){
                             abbrev: agents[a]['abbrev'],
                             img: agents[a]['img'],
                             restaurant: curr_resto['name'],
-                            all_restaurants: restaurants,
+                            all_restaurants: resto_locations,
                             agents: disp_agents.slice()}
             
             exp_timeline.push(new_lunch);
