@@ -73,7 +73,7 @@ jsPsych.plugins['seating_chart'] = (function(){
             
             
             if (remaining_agents === 0) {
-                var button = display_element.find('button');
+                var button = display_element.find('#continue');
                 button.removeClass('continue-inactive');
                 button.addClass('continue');
                 

@@ -86,6 +86,7 @@ $(document).ready(function(){
                             day_no: d,
                             name: agents[a]['name'],
                             abbrev: agents[a]['abbrev'],
+                            img: agents[a]['img'],
                             restaurant: curr_resto['name'],
                             all_restaurants: restaurants,
                             agents: disp_agents.slice()}
