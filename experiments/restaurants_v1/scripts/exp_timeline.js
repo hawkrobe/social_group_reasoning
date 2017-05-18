@@ -19,6 +19,7 @@ $(document).ready(function(){
     */
 
     var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    days = ['Monday', 'Tuesday'];
 
     var restaurants = [{key: 'bb', name: 'Burger Barn', img: 'images/restaurants/bb.png'},
                       {key: 'pp', name: 'Pasta Plaza', img: 'images/restaurants/pp.png'},
