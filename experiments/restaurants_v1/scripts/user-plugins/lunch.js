@@ -14,10 +14,29 @@ jsPsych.plugins['lunch'] = (function(){
       display_element.find('.restaurant_roster td').each(function(i){
           
           var resto_img = trial.all_restaurants[i]['img']
-          var img_tag = '<img src = "{0}" class = "restaurant" />'.format(resto_img);
+          var resto_name = trial.all_restaurants[i]['name']
+          var img_tag = '<img src = "{0}" class = "restaurant" id = "{1}"/>'.format(resto_img, resto_name);
+          
           $(this).append(img_tag)
       });
       
+      // Lines 24-31 display a single agent at a time
+      // Which restaurant did the current agent visit?
+      var resto_names = _.pluck(trial.all_restaurants, 'name');
+      var resto_idx = resto_names.indexOf(trial.restaurant);
+      var resto_selector = '.agent_roster td:nth-child({0})'.format(resto_idx+1);
+      var curr_resto = display_element.find(resto_selector);
+      
+      console.log(resto_idx)
+      console.log(resto_selector)
+      console.log(curr_resto)
+      
+      // Add in single client below restaurant
+      var img_tag = '<img src = "{0}" id = "{1}" class = "agent" />'.format(trial.img, trial.abbrev);
+      curr_resto.append(img_tag);
+      
+      // Uncomment this block to show multiple agents at a time
+      /* 
       // Add in clients below restaurants
       display_element.find('.agent_roster td').each(function(i){
           var curr_resto = $(this)
@@ -35,10 +54,11 @@ jsPsych.plugins['lunch'] = (function(){
               curr_resto.append(img_tag);
           });  
       });
+      */
       
       // Make current image clickable
       display_element.find('#'+trial.abbrev).on('click', function(){
-          // display_element.empty();
+          display_element.empty();
           $(this).unbind('click');
           jsPsych.finishTrial();
       });
