@@ -1,0 +1,54 @@
+---
+title: "Reasoning about Social Groups"
+short-title: "Reasoning about Social Groups"
+output: kmr::apa_manuscript
+
+header-includes:
+   - \usepackage{lscape}
+   - \usepackage{multicol}
+   
+csl: apa6.csl
+bibliography: bib.bib
+
+document-params: "a4paper,man,apacite,floatsintext,longtable"
+
+bib-tex: "bib.bib"
+
+author-information:
+    - \author{Robert Hawkins, Natalia V\'elez, Sophie Bridgers, Noah Goodman, and Hyowen Gweon}
+
+affiliation-information:
+    - \affiliation{Department of Psychology, Stanford University}
+
+author-note:
+    "*These authors contributed equally and are listed alphabetically. Thanks to the Stanford Department of Psychology and the Vice Provost for Graduate Education for funding to support the class. We are grateful to the authors of the original studies who provided materials and gave comments on a draft of this manuscript."
+    
+abstract: 
+    "How do we exploit the structure of similarity in the social world to make inferences about what others are like—and whether they’re like us—from such sparse observations? I’ll present a theoretical framework in which agents solve this problem by reasoning about social groups. By assuming that each individual agent’s utility is drawn from a distribution shared within their group and that their decisions are approximately rational, we can learn properties of social groups from observing their choices and flexibly use these beliefs to make predictions about novel agents. I’ll formalize this theory in a computational model and discuss several key consequences, particularly for Natalia’s work on affiliation & rare overlaps of preferences. We’ll hopefully also have time to discuss identity-formation (i.e. learning what group I belong to and what I value) and the role of knowledge in social group reasoning (i.e. how an agent came to know what they know)."
+    
+keywords:
+    "Social categories; probabilistic modeling; hierarchical representations"
+---
+
+```{r global_options, include=FALSE}
+rm(list=ls())
+library(knitr)
+knitr::opts_chunk$set(fig.width=6, fig.height=5, fig.crop = FALSE, 
+                      fig.path='figs/', echo=FALSE, warning = FALSE, 
+                      cache=TRUE, message = FALSE, sanitize = TRUE)
+library(readr)
+library(dplyr)
+library(xtable)
+library(readr)
+library(tidyr)
+library(ggplot2)
+library(BayesFactor)
+library(ggrepel)
+#devtools::install_github("langcog/langcog")
+library(langcog)
+library(cowplot)
+library(png)
+```
+
+
+# References 
