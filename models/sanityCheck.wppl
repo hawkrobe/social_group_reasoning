@@ -78,7 +78,7 @@ var DPmem = function(alpha, baseDist) {
   }
 }
 
-var groupSampler = DPmem(1, uuid);
+var groupSampler = DPmem(.5, uuid);
 
 var sampleGroupMembership = function(numAgents) {
   return repeat(numAgents,  groupSampler);
@@ -94,15 +94,11 @@ var getPartition = function(lookup) {
 
 ///
 
-// Two people always go to burger barn; two people go both there & stirfry shack
-var data = [{self: {choice : "Burger Barn", rewardSignal : true},
-             others : ["Burger Barn", "Burger Barn", "Burger Barn", "Burger Barn"]},
-            {self: {choice : "Stirfry Shack", rewardSignal : true},
-             others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]},
-            {self: {choice : "Stirfry Shack", rewardSignal : true},
-             others : ["Burger Barn", "Burger Barn", "Burger Barn", "Burger Barn"]},
-            {self: {choice : "Stirfry Shack", rewardSignal : true},
-             others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]}];
+// Two people always go to burger barn; two people always go to stirfry shack
+var data = [{others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]},
+            {others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]},
+            {others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]},
+            {others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]}];
 var numAgents = 4;
 
 var prior = function() {
@@ -125,36 +121,42 @@ var prior = function() {
 var model = function() {
   var beliefs = prior(); 
   mapData({data: data}, function(datum) {
-    // What beliefs would make my friend's choices most likely?
     factor(otherLikelihoods(beliefs.otherUtilities, datum.others));    
   });
   return beliefs;
 };
 
-var posterior = Infer({method: 'SMC', particles: 5000}, model);
-console.log(marginalize(posterior, 'numGroups'));
-  
-// var groupParamsPosterior = marginalize(posterior, 'groupParams');
+var posterior = Infer({method: 'SMC', particles: 10000}, model);
 
-// // console.log('estimation of own utility')
-// // viz.marginals(marginalize(results, 'ownUtility'))
-// // console.log('membership')
-// // viz(marginalize(posterior, 'groupMembership'))
-// // console.log('estimation of group params')
-// map(function(i) {
-//   var mu_bb = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Burger Barn']}).toFixed(3)
-//   var mu_ss = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Stirfry Shack']}).toFixed(3)
-//   var sigma = expectation(groupParamsPosterior, function(x) {return x[i]['groupSD']}).toFixed(3)
-//   console.log('for group ' + i)
-//   console.log('E[U(Burger Barn)] = ' + mu_bb + ' E[U(Stirfry Shack)] = ' + mu_ss + ' and SD = ' + sigma)
-// }, _.range(numGroups))
+// Look at beliefs about group assignments
+console.log(marginalize(posterior, 'partition'));
 
-// // Infer which group novel agent is likely to come from
-// var newAgentChoice = 'Burger Barn'
-// Infer({method: 'SMC', particles: 5000}, function() {
-//   var groupMembership = uniformDraw([0,1]);
-//   var groupParams = sample(groupParamsPosterior)[groupMembership];
-//   var newAgentUtility = sampleAgentUtility(groupParams);
-//   observe(choiceDist(newAgentUtility), newAgentChoice);
-//   return groupMembership
-// })
+// Look at beliefs about group-level utility for cases where [0,1] were grouped
+console.log(expectation(posterior, function(v) {
+  var firstGroupName = v['memberships']['0'];
+  return (!_.isEqual(v.partition[0], ['0', '1']) ? 0 :
+          (v['groupParams'][firstGroupName]['groupMean']['Stirfry Shack'] -
+           v['groupParams'][firstGroupName]['groupMean']['Burger Barn']));
+}));
+
+// Look at variance for cases where [0,1] were grouped
+console.log(expectation(posterior, function(v) {
+  var firstGroupName = v['memberships']['0'];
+  return (!_.isEqual(v.partition[0], ['0', '1']) ? 0 :
+          (v['groupParams'][firstGroupName]['groupSD']))
+}));
+
+// Look at beliefs about group-level utility for cases where [0,1] were grouped
+console.log(expectation(posterior, function(v) {
+  var firstGroupName = v['memberships']['0'];
+  return (!_.isEqual(v.partition[0], ['0', '1', '2', '3']) ? 0 :
+          (v['groupParams'][firstGroupName]['groupMean']['Stirfry Shack'] -
+           v['groupParams'][firstGroupName]['groupMean']['Burger Barn']));
+}));
+
+// Look at variance for cases where [0,1] were grouped
+console.log(expectation(posterior, function(v) {
+  var firstGroupName = v['memberships']['0'];
+  return (!_.isEqual(v.partition[0], ['0', '1', '2', '3']) ? 0 :
+          (v['groupParams'][firstGroupName]['groupSD']))
+}));
