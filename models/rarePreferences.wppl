@@ -1,0 +1,150 @@
+///fold:
+var truncate = function(obj) {
+  return mapObject(function(key, val) {
+    return (val <= 0 ? 0.001 :
+            val >= 1 ? 0.999 :
+            val);
+  }, obj);
+};
+
+// Each agent chooses proportional to utility
+var choiceDist = function(utility) {
+  var ps = normalize(_.values(utility));
+  var vs = _.keys(utility);
+  return Categorical({ps, vs});
+};
+
+var otherLikelihoods = function(otherUtilities, otherChoices) {
+  var likelihoods = map2(function(otherUtility, otherChoice) {
+    return choiceDist(otherUtility).score(otherChoice);
+  }, otherUtilities, otherChoices);
+  return sum(likelihoods);
+};
+
+var sampleAgentUtility = function(groupParams) {
+  var mean = groupParams.groupMean;
+  var sd = groupParams.groupSD;
+  return truncate({
+    "Burger Barn" : gaussian(mean["Burger Barn"], sd),
+    "Stirfry Shack" : gaussian(mean["Stirfry Shack"], sd)
+  });
+};
+
+var sampleOtherUtilities = function(groupParams, groupMembership) {
+  return map(function(agentIndex) {
+    var otherGroupParams = groupParams[groupMembership[agentIndex]];
+    return sampleAgentUtility(otherGroupParams);
+  }, _.keys(groupMembership))
+};
+
+var sampleGroupParams = function(groupNames) {
+  var groupParams = repeat(groupNames.length, function() {
+    return {groupMean : {"Burger Barn" : uniform(0,1),
+                         "Stirfry Shack" : uniform(0,1)},
+            groupSD : uniform(0, 0.1)};
+  });
+  return _.zipObject(groupNames, groupParams);
+};
+
+// helpers for definining dirichlet multinomial 
+// see: https://probmods.org/chapters/12-non-parametric-models.html
+var pickStick = function(sticks, J) {
+  return flip(sticks(J)) ? J : pickStick(sticks, J+1);  
+};
+
+var uuid = function() {
+  var s4 = function() {
+    return (Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1));
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+var makeSticks = function(alpha) {
+  var sticks = mem(function(index) {return beta(1, alpha)});
+  return function() {
+    return pickStick(sticks,1)
+  };
+}
+
+var DPmem = function(alpha, baseDist) {
+  var augmentedProc = mem(function(args, stickIndex) {return apply(baseDist, args)});
+  var DP = mem(function(args) {return makeSticks(alpha)});
+  return function(argsin) {
+    var stickIndex = DP(argsin)()
+    return augmentedProc(argsin, stickIndex);
+  }
+}
+
+var groupSampler = DPmem(1, uuid);
+
+var sampleGroupMembership = function(numAgents) {
+  return repeat(numAgents,  groupSampler);
+};
+
+// Transforms list of group labels into partition of indices
+// e.g. getPartition(['clowns', 'jocks', 'nerds', 'clowns'])
+// => [[0, 3], [1], [2]]
+// Note: probably rather expensive to run a lot... 
+var getPartition = function(lookup) {
+  return groupBy(function(x, y) {return lookup[x] == lookup[y]}, _.keys(lookup));
+};
+
+///
+
+// Two people always go to burger barn; two people always go to stirfry shack
+var data = [{others : ["Burger Barn",   "Burger Barn", "Burger Barn", "Stirfry Shack"]},
+            {others : ["Burger Barn",   "Burger Barn", "Stirfry Shack", "Burger Barn"]},            
+            {others : ["Burger Barn",   "Burger Barn", "Burger Barn", "Stirfry Shack"]},
+            {others : ["Burger Barn",   "Burger Barn", "Burger Barn", "Stirfry Shack"]},
+            {others : ["Burger Barn",   "Burger Barn", "Stirfry Shack", "Burger Barn"]},
+            {others : ["Burger Barn",   "Burger Barn", "Burger Barn", "Stirfry Shack"]},
+            {others : ["Burger Barn", "Burger Barn",   "Stirfry Shack", "Burger Barn"]},
+            {others : ["Burger Barn", "Burger Barn", "Stirfry Shack", "Burger Barn"]}];
+var numAgents = 4;
+
+var prior = function() {
+  var memberships = sampleGroupMembership(numAgents);
+  var membershipObj = _.zipObject(_.range(memberships.length), memberships);
+  var membershipPartition = getPartition(membershipObj);
+  var groupNames = _.uniq(memberships);
+  var numGroups = groupNames.length;
+  var groupParams = sampleGroupParams(groupNames);
+
+  return {
+    groupParams: groupParams,
+    groupNames: groupNames,
+    numGroups : numGroups,
+    memberships : membershipObj,
+    partition : membershipPartition,
+    otherUtilities: sampleOtherUtilities(groupParams, membershipObj)
+  };
+};
+
+var model = function() {
+  var beliefs = prior(); 
+  mapData({data: data}, function(datum) {
+    factor(otherLikelihoods(beliefs.otherUtilities, datum.others));    
+  });
+  return beliefs;
+};
+
+var posterior = Infer({method: 'SMC', particles: 20000}, model);
+
+// Look at beliefs about group assignments
+console.log(marginalize(posterior, 'partition'));
+
+// Generalize to new agent:
+console.log(Infer({method: 'SMC', particles: 10000}, function() {
+  var beliefs = sample(posterior);
+  // TODO: should this be proportional to size?
+  var groupMembership = uniformDraw(beliefs.groupNames);
+  var groupParams = beliefs.groupParams[groupMembership];
+  var newAgentUtility = sampleAgentUtility(groupParams);
+  observe(choiceDist(newAgentUtility), 'Burger Barn');
+  observe(choiceDist(newAgentUtility), 'Stirfry Shack');  
+  return getPartition(extend(beliefs.memberships, {'5' : groupMembership}));
+}));
+
