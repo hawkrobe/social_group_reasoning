@@ -30,30 +30,69 @@ var sampleAgentUtility = function(groupParams) {
   });
 };
 
-var sampleOtherUtilities = function(groupParams, groupMembership, numAgents) {
+var sampleOtherUtilities = function(groupParams, groupMembership) {
   return map(function(agentIndex) {
-    var otherGroupParams = groupParams[groupMembership[agentIndex + 1]];
+    var otherGroupParams = groupParams[groupMembership[agentIndex]];
     return sampleAgentUtility(otherGroupParams);
-  }, _.range(numAgents))
+  }, _.keys(groupMembership))
 };
 
-var sampleGroupParams = function(numGroups) {
-  return repeat(numGroups, function() {
+var sampleGroupParams = function(groupNames) {
+  var groupParams = repeat(groupNames.length, function() {
     return {groupMean : {"Burger Barn" : uniform(0,1),
                          "Stirfry Shack" : uniform(0,1)},
             groupSD : uniform(0, 0.1)};
   });
+  return _.zipObject(groupNames, groupParams);
 };
 
-// always put self in group 0 (for ease of analysis)
-var sampleGroupMembership = function(numAgents, numGroups) {
-  return [0].concat(repeat(numAgents, function() {
-    return randomInteger(numGroups);
-  }));
+// helpers for definining dirichlet multinomial 
+// see: https://probmods.org/chapters/12-non-parametric-models.html
+var pickStick = function(sticks, J) {
+  return flip(sticks(J)) ? J : pickStick(sticks, J+1);  
+};
+
+var uuid = function() {
+  var s4 = function() {
+    return (Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1));
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+var makeSticks = function(alpha) {
+  var sticks = mem(function(index) {return beta(1, alpha)});
+  return function() {
+    return pickStick(sticks,1)
+  };
+}
+
+var DPmem = function(alpha, baseDist) {
+  var augmentedProc = mem(function(args, stickIndex) {return apply(baseDist, args)});
+  var DP = mem(function(args) {return makeSticks(alpha)});
+  return function(argsin) {
+    var stickIndex = DP(argsin)()
+    return augmentedProc(argsin, stickIndex);
+  }
+}
+
+var groupSampler = DPmem(1, uuid);
+
+var sampleGroupMembership = function(numAgents) {
+  return repeat(numAgents,  groupSampler);
+};
+
+// Transforms list of group labels into partition of indices
+// e.g. getPartition(['clowns', 'jocks', 'nerds', 'clowns'])
+// => [[0, 3], [1], [2]]
+// Note: probably rather expensive to run a lot... 
+var getPartition = function(lookup) {
+  return groupBy(function(x, y) {return lookup[x] == lookup[y]}, _.keys(lookup));
 };
 
 ///
-
 
 // Two people always go to burger barn; two people go both there & stirfry shack
 var data = [{self: {choice : "Burger Barn", rewardSignal : true},
@@ -65,18 +104,21 @@ var data = [{self: {choice : "Burger Barn", rewardSignal : true},
             {self: {choice : "Stirfry Shack", rewardSignal : true},
              others : ["Stirfry Shack", "Stirfry Shack", "Burger Barn", "Burger Barn"]}];
 var numAgents = 4;
-var numGroups = 2;
 
 var prior = function() {
-  var groupParams = sampleGroupParams(numGroups),
-      groupMembership = sampleGroupMembership(numAgents, numGroups);
-  
+  var memberships = sampleGroupMembership(numAgents);
+  var membershipObj = _.zipObject(_.range(memberships.length), memberships);
+  var membershipPartition = getPartition(membershipObj);
+  var groupNames = _.uniq(memberships);
+  var numGroups = groupNames.length;
+  var groupParams = sampleGroupParams(groupNames);
+
   return {
     groupParams: groupParams,
     numGroups : numGroups,
-    groupMembership: groupMembership,
-    ownUtility: sampleAgentUtility(groupParams[groupMembership[0]]),
-    otherUtilities: sampleOtherUtilities(groupParams, groupMembership, numAgents)
+    memberships : membershipObj,
+    partition : membershipPartition,
+    otherUtilities: sampleOtherUtilities(groupParams, membershipObj)
   };
 };
 
@@ -90,28 +132,29 @@ var model = function() {
 };
 
 var posterior = Infer({method: 'SMC', particles: 5000}, model);
+console.log(marginalize(posterior, 'numGroups'));
+  
+// var groupParamsPosterior = marginalize(posterior, 'groupParams');
 
-var groupParamsPosterior = marginalize(posterior, 'groupParams');
+// // console.log('estimation of own utility')
+// // viz.marginals(marginalize(results, 'ownUtility'))
+// // console.log('membership')
+// // viz(marginalize(posterior, 'groupMembership'))
+// // console.log('estimation of group params')
+// map(function(i) {
+//   var mu_bb = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Burger Barn']}).toFixed(3)
+//   var mu_ss = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Stirfry Shack']}).toFixed(3)
+//   var sigma = expectation(groupParamsPosterior, function(x) {return x[i]['groupSD']}).toFixed(3)
+//   console.log('for group ' + i)
+//   console.log('E[U(Burger Barn)] = ' + mu_bb + ' E[U(Stirfry Shack)] = ' + mu_ss + ' and SD = ' + sigma)
+// }, _.range(numGroups))
 
-// console.log('estimation of own utility')
-// viz.marginals(marginalize(results, 'ownUtility'))
-// console.log('membership')
-// viz(marginalize(posterior, 'groupMembership'))
-// console.log('estimation of group params')
-map(function(i) {
-  var mu_bb = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Burger Barn']}).toFixed(3)
-  var mu_ss = expectation(groupParamsPosterior, function(x) {return x[i]['groupMean']['Stirfry Shack']}).toFixed(3)
-  var sigma = expectation(groupParamsPosterior, function(x) {return x[i]['groupSD']}).toFixed(3)
-  console.log('for group ' + i)
-  console.log('E[U(Burger Barn)] = ' + mu_bb + ' E[U(Stirfry Shack)] = ' + mu_ss + ' and SD = ' + sigma)
-}, _.range(numGroups))
-
-// Infer which group novel agent is likely to come from
-var newAgentChoice = 'Burger Barn'
-Infer({method: 'SMC', particles: 5000}, function() {
-  var groupMembership = uniformDraw([0,1]);
-  var groupParams = sample(groupParamsPosterior)[groupMembership];
-  var newAgentUtility = sampleAgentUtility(groupParams);
-  observe(choiceDist(newAgentUtility), newAgentChoice);
-  return groupMembership
-})
+// // Infer which group novel agent is likely to come from
+// var newAgentChoice = 'Burger Barn'
+// Infer({method: 'SMC', particles: 5000}, function() {
+//   var groupMembership = uniformDraw([0,1]);
+//   var groupParams = sample(groupParamsPosterior)[groupMembership];
+//   var newAgentUtility = sampleAgentUtility(groupParams);
+//   observe(choiceDist(newAgentUtility), newAgentChoice);
+//   return groupMembership
+// })
