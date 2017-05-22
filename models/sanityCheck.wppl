@@ -128,35 +128,29 @@ var model = function() {
 
 var posterior = Infer({method: 'SMC', particles: 10000}, model);
 
-// Look at beliefs about group assignments
-console.log(marginalize(posterior, 'partition'));
+
+var posterior01 = Infer({method: 'enumerate'}, function() {
+  var v = sample(posterior)
+  condition(_.isEqual(v.partition[0], ['0', '1']))
+  return v;
+})
+
+// // Look at beliefs about group assignments
+console.log(marginalize(posterior01, 'partition'));
 
 // Look at beliefs about group-level utility for cases where [0,1] were grouped
-console.log(expectation(posterior, function(v) {
+console.log(expectation(posterior01, function(v) {
   var firstGroupName = v['memberships']['0'];
-  return (!_.isEqual(v.partition[0], ['0', '1']) ? 0 :
-          (v['groupParams'][firstGroupName]['groupMean']['Stirfry Shack'] -
-           v['groupParams'][firstGroupName]['groupMean']['Burger Barn']));
+  return v['groupParams'][firstGroupName]['groupMean']['Stirfry Shack'];
+}));
+
+console.log(expectation(posterior01, function(v) {
+  var firstGroupName = v['memberships']['0'];
+  return v['groupParams'][firstGroupName]['groupMean']['Burger Barn'];
 }));
 
 // Look at variance for cases where [0,1] were grouped
-console.log(expectation(posterior, function(v) {
+console.log(expectation(posterior01, function(v) {
   var firstGroupName = v['memberships']['0'];
-  return (!_.isEqual(v.partition[0], ['0', '1']) ? 0 :
-          (v['groupParams'][firstGroupName]['groupSD']))
-}));
-
-// Look at beliefs about group-level utility for cases where [0,1] were grouped
-console.log(expectation(posterior, function(v) {
-  var firstGroupName = v['memberships']['0'];
-  return (!_.isEqual(v.partition[0], ['0', '1', '2', '3']) ? 0 :
-          (v['groupParams'][firstGroupName]['groupMean']['Stirfry Shack'] -
-           v['groupParams'][firstGroupName]['groupMean']['Burger Barn']));
-}));
-
-// Look at variance for cases where [0,1] were grouped
-console.log(expectation(posterior, function(v) {
-  var firstGroupName = v['memberships']['0'];
-  return (!_.isEqual(v.partition[0], ['0', '1', '2', '3']) ? 0 :
-          (v['groupParams'][firstGroupName]['groupSD']))
+  return (v['groupParams'][firstGroupName]['groupSD'])
 }));
