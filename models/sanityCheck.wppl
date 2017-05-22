@@ -128,15 +128,14 @@ var model = function() {
 
 var posterior = Infer({method: 'SMC', particles: 10000}, model);
 
+// Look at beliefs about group assignments
+console.log(marginalize(posterior, 'partition'));
 
 var posterior01 = Infer({method: 'enumerate'}, function() {
   var v = sample(posterior)
   condition(_.isEqual(v.partition[0], ['0', '1']))
   return v;
 })
-
-// // Look at beliefs about group assignments
-console.log(marginalize(posterior01, 'partition'));
 
 // Look at beliefs about group-level utility for cases where [0,1] were grouped
 console.log(expectation(posterior01, function(v) {
